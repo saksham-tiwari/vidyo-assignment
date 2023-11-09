@@ -1,12 +1,9 @@
 import React from 'react';
-import VideoPlayer from './components/VideoPlayer/VideoPlayer';
+import Wrapper from './components/Wrapper/Wrapper';
 
 function App() {
   return (
-    <div>
-      <h1>Video Player</h1>
-      <VideoPlayer />
-    </div>
+    <Wrapper/>
   );
 }
 

@@ -1,144 +1,219 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import WaveSurfer from "wavesurfer.js";
+import MetaData from "../MetaData/MetaData";
+import Video from "../Video/Video";
+import WaveSurferComponent from "../WaveSurfer/WaveSurfer";
 
-const VideoPlayer = () => {
-  const canvasRef = useRef(null);
+function Editor() {
+  const [videoSrc, setVideoSrc] = useState(null);
+  const [videoMetadata, setVideoMetadata] = useState({ duration: 0 });
   const videoRef = useRef(null);
+  const canvasRef = useRef(null);
+  const wavesurferRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [showVideo, setShowVideo] = useState(false);
-  const [videoWidth, setVideoWidth] = useState(0);
-  const [videoHeight, setVideoHeight] = useState(0);
-  const [duration, setDuration] = useState(0);
-  const [videoMetadata, setVideoMetadata] = useState({});
+  const fileRef = useRef(null);
+  const [audioPresent, setAudioPresent] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const fps = 60;
-  const canvasWidth = videoWidth;
-  const canvasHeight = videoHeight;
-  const canvasInterval = useRef(null);
+  // useEffect(() => {
+  //   videoRef.current = document.createElement("video");
+  //   wavesurferRef.current = WaveSurfer.create({
+  //     container: "#waveform",
+  //     waveColor: "violet",
+  //     progressColor: "purple",
+  //     backend: "MediaElement",
+  //   });
 
-  const handleFileSelect = (event) => {
+  //   wavesurferRef.current.on("seek", (progress) => {
+  //     if (videoRef.current) {
+  //       const newTime = videoRef.current.duration * progress;
+  //       videoRef.current.currentTime = newTime;
+  //     }
+  //   });
+
+  //   return () => {
+  //     if (videoRef.current) {
+  //       URL.revokeObjectURL(videoRef.current.src);
+  //       videoRef.current = null;
+  //     }
+  //     if (wavesurferRef.current) {
+  //       wavesurferRef.current.destroy();
+  //     }
+  //   };
+  // }, []);
+
+  const handleFileChange = async (event) => {
     const file = event.target.files[0];
+    if (file) {
+      const url = URL.createObjectURL(file);
+      const video = videoRef.current;
+      video.src = url;
+      setVideoSrc(url);
+      video.onloadedmetadata = () => {
+        setIsLoading(true);
+        const audioContext = new (window.AudioContext ||
+            window.webkitAudioContext)();
+        const source = audioContext.createMediaElementSource(video);
+        const analyser = audioContext.createAnalyser();
 
-    if (videoRef.current) {
-      videoRef.current.src = URL.createObjectURL(file);
-      videoRef.current.load();
-      setShowVideo(true);
+        const gainNode = audioContext.createGain();
+        gainNode.gain.value = 0;
+        source.connect(analyser);
+        analyser.connect(gainNode);
+        gainNode.connect(audioContext.destination)
+        analyser.fftSize = 2048;
+        const bufferLength = analyser.frequencyBinCount;
+        const dataArray = new Uint8Array(bufferLength);
+        let audioPres = false;
 
-      videoRef.current.onloadedmetadata = () => {
-        setVideoWidth(videoRef.current.videoWidth);
-        setVideoHeight(videoRef.current.videoHeight);
-        setDuration(videoRef.current.duration);
-
-        // Extract and store video metadata
-        const metadata = {};
-        for (let i = 0; i < videoRef.current.seekable.length; i++) {
-          metadata[`Seekable Range ${i + 1}`] = `Start: ${videoRef.current.seekable.start(i)}s, End: ${videoRef.current.seekable.end(i)}s`;
+        function hasAudio() {
+          analyser.getByteFrequencyData(dataArray);
+          const sum = dataArray.reduce((a, value) => a + value, 0);
+          return sum > 0;
         }
-        metadata["Current Time"] = `${videoRef.current.currentTime}s`;
-        metadata["Volume"] = videoRef.current.volume;
-        metadata["Playback Rate"] = videoRef.current.playbackRate;
-        metadata["Muted"] = videoRef.current.muted;
-        metadata["Autoplay"] = videoRef.current.autoplay;
-        metadata["Controls"] = videoRef.current.controls;
-        metadata["Loop"] = videoRef.current.loop;
 
-        setVideoMetadata(metadata);
+        video.addEventListener("timeupdate", () => {
+          if (!audioPres) {
+            if (hasAudio()) {
+              console.log("video has audio");
+              audioPres = true;
+            } else {
+              console.log("video doesn't have audio");
+            }
+          }
+        });
+
+        // video.muted = true;
+        video.play();
+
+        setTimeout(()=>{
+          video.pause();
+          if (audioPres) {
+            gainNode.gain.value = 1
+            video.currentTime = 0;
+            video.addEventListener("seeked", function drawThumbnail() {
+              drawVideoFrame();
+              video.pause();
+              video.removeEventListener("seeked", drawThumbnail);
+            });
+            setVideoMetadata({
+              duration: video.duration,
+              height: video.videoHeight,
+              width: video.videoWidth,
+              aspectRatio: video.videoWidth / video.videoHeight,
+              range: `${video.seekable.start(0)} - ${video.seekable
+                  .end(0)
+                  .toFixed(2)}`,
+            });
+            setIsLoading(false);
+          } else{
+            console.error("The uploaded video has no Audio. Please try again.");
+            setIsLoading(false);
+            setTimeout(()=>{window.location.reload()}, 3000)
+          }
+        }, 3000)
       };
+      const audioContext = new (window.AudioContext ||
+        window.webkitAudioContext)();
+      const response = await fetch(url);
+      const arrayBuffer = await response.arrayBuffer();
+      const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+      if (audioBuffer.numberOfChannels === 0) {
+        URL.revokeObjectURL(url);
+        setVideoSrc(null);
+        return;
+      }
+    }
+  };
+
+  const drawVideoFrame = () => {
+    const canvas = canvasRef.current;
+    const video = videoRef.current;
+    if (!isPlaying) {
+      const ctx = canvasRef.current.getContext("2d");
+      ctx.drawImage(
+        videoRef.current,
+        0,
+        0,
+        canvasRef.current.width,
+        canvasRef.current.height,
+      );
+    }
+    if (canvas && video) {
+      const ctx = canvas.getContext("2d");
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      if (!video.paused && !video.ended) {
+        requestAnimationFrame(drawVideoFrame);
+      }
+    }
+  };
+
+  const togglePlayPause = () => {
+    const video = videoRef.current;
+    if (video.paused || video.ended) {
+      setIsPlaying(true);
+      video.play();
+      drawVideoFrame();
+    } else {
+      setIsPlaying(false);
+      video.pause();
     }
   };
 
   useEffect(() => {
-    const canvas = canvasRef.current;
-
-    if (!canvas || !videoRef.current) return;
-
-    const drawImage = () => {
-      canvas.getContext("2d", { alpha: false }).drawImage(videoRef.current, 0, 0, canvasWidth, canvasHeight);
-    };
-
-    const startCanvasInterval = () => {
-      canvasInterval.current = window.setInterval(() => {
-        drawImage();
-      }, 1000 / fps);
-    };
-
-    videoRef.current.onplay = () => {
-      clearInterval(canvasInterval.current);
-      startCanvasInterval();
-    };
-
-    videoRef.current.onended = () => {
-      clearInterval(canvasInterval.current);
-    };
-
-    videoRef.current.addEventListener("canplay", () => {
-      videoRef.current.play();
-      videoRef.current.pause();
-    });
-
-    return () => {
-      clearInterval(canvasInterval.current);
-    };
-  }, [canvasWidth, canvasHeight]);
-
-  const handlePlayPause = () => {
-    if (videoRef.current) {
-      if (isPlaying) {
-        videoRef.current.pause();
-      } else {
-        videoRef.current.play();
-      }
-      setIsPlaying(!isPlaying);
+    if (videoSrc) {
+      wavesurferRef.current.load(videoSrc);
     }
-  };
+  }, [videoSrc]);
 
-  const buttonStyle = {
-    position: "absolute",
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
-  };
-
+  useEffect(() => {
+    const video = videoRef.current;
+    if (video) {
+      const onTimeUpdate = () => {
+        const currentTime = video.currentTime;
+        const duration = video.duration;
+        const progress = currentTime / duration;
+        wavesurferRef.current.seekTo(progress);
+        setVideoMetadata((prevMdata) => ({ ...prevMdata, currentTime }));
+      };
+      video.addEventListener("timeupdate", onTimeUpdate);
+      return () => video.removeEventListener("timeupdate", onTimeUpdate);
+    }
+  }, [videoSrc]);
+  
   return (
-    <div style={{ position: "relative" }}>
-      <input type="file" accept="video/*" onChange={handleFileSelect} />
-      <div className="video" style={showVideo ? {} : { display: "none" }}>
-        <video
-          ref={videoRef}
-          width={videoWidth}
-          height={videoHeight}
-          style={{ display: "none" }}
-          autoPlay={false}
-        ></video>
-        <canvas
-          ref={canvasRef}
-          width={canvasWidth}
-          height={canvasHeight}
-          style={{ border: "1px solid black" }}
-        ></canvas>
-        <div style={buttonStyle}>
-          <button onClick={handlePlayPause}>
-            {isPlaying ? "Pause" : "Play"}
-          </button>
-        </div>
+    <div
+    >
+      {
+          isLoading && <div>Loading...</div>
+      }
+      <div>
+        <Video videoMetadata={videoMetadata} togglePlayPause={togglePlayPause} isPlaying={isPlaying} canvasRef={canvasRef}/>
+        <input
+          type="file"
+          ref={fileRef}
+          accept="video/*"
+          onChange={handleFileChange}
+          style={{
+            display: "none",
+          }}
+        />
+        <WaveSurferComponent videoMetadata={videoMetadata} videoRef={videoRef} wavesurferRef={wavesurferRef}/>
       </div>
-      {duration > 0 && (
-        <div className="metadata">
-          <h2>Video Metadata</h2>
-          <p>Duration: {duration.toFixed(2)} seconds</p>
-          <p>Video Width: {videoWidth}px</p>
-          <p>Video Height: {videoHeight}px</p>
-          <h3>Additional Metadata:</h3>
-          <ul>
-            {Object.entries(videoMetadata).map(([key, value]) => (
-              <li key={key}>
-                <strong>{key}:</strong> {value}
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
+      <div>
+          <button
+            className={"uploadVideo"}
+            onClick={() => { fileRef.current.click();}}
+            disabled={videoMetadata.duration !== 0}
+          >
+            {videoMetadata.duration !== 0? "Video already uploaded!": "Upload"}
+          </button>
+        {videoSrc && (
+          <MetaData videoMetadata={videoMetadata}/>
+        )}
+      </div>
     </div>
   );
-};
+}
 
-export default VideoPlayer;
+export default Editor;
