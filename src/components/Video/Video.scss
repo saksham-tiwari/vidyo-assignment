@@ -15,12 +15,18 @@
         position: absolute;
         top: 50%;
         transform: translate(0, -50%);
-        padding: 1rem 3rem;
         border: none;
         outline: none;
         opacity: 0;
+        background: none;
         cursor: pointer;
         transition: all 250ms ease;
+        svg{
+            width: 4rem;
+            height: 4rem;
+            color: white;
+            fill: white;
+        }
     }
     .show{
         opacity: 1;
