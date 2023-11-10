@@ -9,7 +9,7 @@
 
 ## About The Project
 
-![Screen Shot](images/screenshot.png)
+![Screen Shot](images/screenshot.jpeg)
 
 This project was assigned to me by <a href="https://vidyo.ai/">Vidyo.ai</a> as a Round 2 Assessment project for SELECT 2024 internship. I am grateful to <a href="https://vidyo.ai/">Vidyo.ai</a> for considering me for this role. I am also thankful to <a href="https://github.com/s-r-aman">SR Aman</a> for supporting me in application process.
 
