@@ -1,10 +1,11 @@
 import React from 'react'
 import VideoPlayer from '../VideoPlayer/VideoPlayer'
 // import WaveSurferComponent from '../WaveSurfer/WaveSurfer'
+import "./styles.scss"
 
 const Wrapper = () => {
   return (
-    <div>
+    <div className='Main-Wrapper'>
         <h1>Video Player</h1>
         <VideoPlayer/>
     </div>

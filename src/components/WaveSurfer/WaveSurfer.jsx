@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react'
 import WaveSurfer from "wavesurfer.js";
+import './WaveSurfer.scss'
 
 const WaveSurferComponent = ({videoMetadata, videoRef,wavesurferRef}) => {
     useEffect(() => {
@@ -27,9 +28,9 @@ const WaveSurferComponent = ({videoMetadata, videoRef,wavesurferRef}) => {
             wavesurferRef.current.destroy();
           }
         };
-      }, []);
+      }, [videoRef, wavesurferRef]);
   return (
-    <div>
+    <div className='waveSurferWrapper'>
         <div id="waveform"/>
         {videoMetadata.duration ?<p>
         Audio Waveform

@@ -7,13 +7,11 @@
   </p>
 </p>
 
-
-
 ## About The Project
 
 ![Screen Shot](images/screenshot.png)
 
-This project was assigned to me by Vidyo.ai as a Round 2 Assessment project for SELECT 2024 internship. I am grateful to Vidyo.ai for considering me for this role. 
+This project was assigned to me by <a href="https://vidyo.ai/">Vidyo.ai</a> as a Round 2 Assessment project for SELECT 2024 internship. I am grateful to <a href="https://vidyo.ai/">Vidyo.ai</a> for considering me for this role. I am also thankful to <a href="https://github.com/s-r-aman">SR Aman</a> for supporting me in application process.
 
 This project is designed to help you interact with various HTML5 elements, including Canvas, Video, and Audio. The project is divided into two parts, each with specific tasks.
 
@@ -36,9 +34,8 @@ To use this React.js project, follow these steps:
 
 2. Open the project folder in your preferred code editor.
 
-3. Install project dependencies using the following command: 
-```npm install```
+3. Install project dependencies using the following command:
+   `npm install`
 
-4. Start the development server with: 
-```npm start```
-
+4. Start the development server with:
+   `npm start`

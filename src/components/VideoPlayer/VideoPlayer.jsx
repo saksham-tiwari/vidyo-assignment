@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
-import WaveSurfer from "wavesurfer.js";
 import MetaData from "../MetaData/MetaData";
 import Video from "../Video/Video";
 import WaveSurferComponent from "../WaveSurfer/WaveSurfer";
+import "./VideoPlayer.scss"
 
 function Editor() {
   const [videoSrc, setVideoSrc] = useState(null);
@@ -12,35 +12,7 @@ function Editor() {
   const wavesurferRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const fileRef = useRef(null);
-  const [audioPresent, setAudioPresent] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-
-  // useEffect(() => {
-  //   videoRef.current = document.createElement("video");
-  //   wavesurferRef.current = WaveSurfer.create({
-  //     container: "#waveform",
-  //     waveColor: "violet",
-  //     progressColor: "purple",
-  //     backend: "MediaElement",
-  //   });
-
-  //   wavesurferRef.current.on("seek", (progress) => {
-  //     if (videoRef.current) {
-  //       const newTime = videoRef.current.duration * progress;
-  //       videoRef.current.currentTime = newTime;
-  //     }
-  //   });
-
-  //   return () => {
-  //     if (videoRef.current) {
-  //       URL.revokeObjectURL(videoRef.current.src);
-  //       videoRef.current = null;
-  //     }
-  //     if (wavesurferRef.current) {
-  //       wavesurferRef.current.destroy();
-  //     }
-  //   };
-  // }, []);
 
   const handleFileChange = async (event) => {
     const file = event.target.files[0];
@@ -83,7 +55,6 @@ function Editor() {
           }
         });
 
-        // video.muted = true;
         video.play();
 
         setTimeout(()=>{
@@ -182,35 +153,38 @@ function Editor() {
   }, [videoSrc]);
   
   return (
-    <div
-    >
+    <div className="VideoPlayer">
       {
           isLoading && <div>Loading...</div>
       }
-      <div>
-        <Video videoMetadata={videoMetadata} togglePlayPause={togglePlayPause} isPlaying={isPlaying} canvasRef={canvasRef}/>
-        <input
-          type="file"
-          ref={fileRef}
-          accept="video/*"
-          onChange={handleFileChange}
-          style={{
-            display: "none",
-          }}
-        />
-        <WaveSurferComponent videoMetadata={videoMetadata} videoRef={videoRef} wavesurferRef={wavesurferRef}/>
-      </div>
-      <div>
-          <button
-            className={"uploadVideo"}
-            onClick={() => { fileRef.current.click();}}
-            disabled={videoMetadata.duration !== 0}
-          >
-            {videoMetadata.duration !== 0? "Video already uploaded!": "Upload"}
-          </button>
-        {videoSrc && (
+      <div class="flexDiv">
+        <div class="flexLeft">
+          <div className="fileInputDiv">
+            <input
+              type="file"
+              ref={fileRef}
+              accept="video/*"
+              onChange={handleFileChange}
+              style={{
+                display: "none",
+              }}
+            />
+            <button
+              className="uploadVideo btn"
+              onClick={() => { fileRef.current.click();}}
+              disabled={videoMetadata.duration !== 0}
+            >
+              {videoMetadata.duration !== 0? "Video already uploaded!": "Upload"}
+            </button>
+          </div>
+          <Video videoMetadata={videoMetadata} togglePlayPause={togglePlayPause} isPlaying={isPlaying} canvasRef={canvasRef}/>
+          
+          <WaveSurferComponent videoMetadata={videoMetadata} videoRef={videoRef} wavesurferRef={wavesurferRef}/>
+        </div>
+      
+        {/* {videoSrc && ( */}
           <MetaData videoMetadata={videoMetadata}/>
-        )}
+        {/* )} */}
       </div>
     </div>
   );

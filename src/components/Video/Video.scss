@@ -1,0 +1,26 @@
+.VideoDiv {
+    display: flex;
+    position: relative;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    border-radius: 12px;
+    box-shadow: 0 0 15px #0000003f;
+    margin-top: 1.5rem;
+    // width: 650px;
+
+    // canvas {
+    //     position: absolute;
+    //     top: 0;
+    // }
+
+    .playPauseBtn {
+        z-index: 3;
+        position: absolute;
+        top: 50%;
+        padding: 1rem 3rem;
+        border: none;
+        outline: none;
+    }
+
+}
