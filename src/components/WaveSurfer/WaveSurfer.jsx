@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import WaveSurfer from "wavesurfer.js";
 import './WaveSurfer.scss'
 
-const WaveSurferComponent = ({videoMetadata, videoRef,wavesurferRef}) => {
+const WaveSurferComponent = ({videoMetadata, videoRef,wavesurferRef, isLoading}) => {
     useEffect(() => {
         videoRef.current = document.createElement("video");
         wavesurferRef.current = WaveSurfer.create({
@@ -31,8 +31,8 @@ const WaveSurferComponent = ({videoMetadata, videoRef,wavesurferRef}) => {
       }, [videoRef, wavesurferRef]);
   return (
     <div className='waveSurferWrapper'>
-        <div id="waveform"/>
-        {videoMetadata.duration ?<p>
+        <div id="waveform" style={(videoMetadata.duration && !isLoading)?{}:{display:"none"}}/>
+        {(videoMetadata.duration && !isLoading) ?<p>
         Audio Waveform
         </p>:<></>}
     </div>

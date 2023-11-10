@@ -2,16 +2,23 @@
     width: 300px;
     height: 250px;
     border-radius: 10px;
-    box-shadow: 0 3px 13px #00000067;
+    box-shadow: 0 0 15px #0000003f;
 
     h3 {
         text-align: center;
         padding: 1rem;
+    } 
+    p{
+        padding: 1rem;
+        text-align: center;
     }
 
     ul {
 
         list-style: none;
         padding: .6rem;
+        li{
+            text-transform: capitalize;
+        }
     }
 }

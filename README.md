@@ -39,3 +39,5 @@ To use this React.js project, follow these steps:
 
 4. Start the development server with:
    `npm start`
+
+5. Open your web browser and navigate to http://localhost:3000 to use the application.

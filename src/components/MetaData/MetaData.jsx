@@ -1,9 +1,9 @@
 import React from 'react'
 import './MetaData.scss'
-const MetaData = ({videoMetadata}) => {
+const MetaData = ({videoMetadata, isLoading}) => {
   return (
     <div className='metaData-wrapper'>
-      <h3>Meta Data</h3>
+      {(videoMetadata.duration && !isLoading)?<><h3>Meta Data</h3>
       <hr/>
           <ul>
             {Object.entries(videoMetadata).map(([key, value]) => (
@@ -11,7 +11,9 @@ const MetaData = ({videoMetadata}) => {
                 <strong>{key}:</strong> {value}
               </li>
             ))}
-          </ul>
+          </ul></>:
+          <p>Metadata is visible once video is rendered</p>
+          }
     </div>
   )
 }

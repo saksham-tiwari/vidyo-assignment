@@ -4,7 +4,7 @@ import Video from "../Video/Video";
 import WaveSurferComponent from "../WaveSurfer/WaveSurfer";
 import "./VideoPlayer.scss"
 
-function Editor() {
+function Editor({setErr}) {
   const [videoSrc, setVideoSrc] = useState(null);
   const [videoMetadata, setVideoMetadata] = useState({ duration: 0 });
   const videoRef = useRef(null);
@@ -69,16 +69,17 @@ function Editor() {
             });
             setVideoMetadata({
               duration: video.duration,
-              height: video.videoHeight,
-              width: video.videoWidth,
-              aspectRatio: video.videoWidth / video.videoHeight,
-              range: `${video.seekable.start(0)} - ${video.seekable
+              "Height": video.videoHeight,
+              "Width": video.videoWidth,
+              "Aspect Ratio": video.videoWidth / video.videoHeight,
+              "Range": `${video.seekable.start(0)} - ${video.seekable
                   .end(0)
                   .toFixed(2)}`,
             });
             setIsLoading(false);
           } else{
             console.error("The uploaded video has no Audio. Please try again.");
+            setErr(true)
             setIsLoading(false);
             setTimeout(()=>{window.location.reload()}, 3000)
           }
@@ -154,9 +155,6 @@ function Editor() {
   
   return (
     <div className="VideoPlayer">
-      {
-          isLoading && <div>Loading...</div>
-      }
       <div class="flexDiv">
         <div class="flexLeft">
           <div className="fileInputDiv">
@@ -174,16 +172,17 @@ function Editor() {
               onClick={() => { fileRef.current.click();}}
               disabled={videoMetadata.duration !== 0}
             >
-              {videoMetadata.duration !== 0? "Video already uploaded!": "Upload"}
+              {videoMetadata.duration !== 0? "Video already uploaded! ": "Upload"}
+              {videoMetadata.duration !== 0? <a href="/">Reload?</a>:<></>}
             </button>
           </div>
-          <Video videoMetadata={videoMetadata} togglePlayPause={togglePlayPause} isPlaying={isPlaying} canvasRef={canvasRef}/>
+          <Video videoMetadata={videoMetadata} togglePlayPause={togglePlayPause} isPlaying={isPlaying} canvasRef={canvasRef} isLoading={isLoading}/>
           
           <WaveSurferComponent videoMetadata={videoMetadata} videoRef={videoRef} wavesurferRef={wavesurferRef}/>
         </div>
       
         {/* {videoSrc && ( */}
-          <MetaData videoMetadata={videoMetadata}/>
+          <MetaData videoMetadata={videoMetadata} isLoading = {isLoading}/>
         {/* )} */}
       </div>
     </div>
