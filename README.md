@@ -1,70 +1,44 @@
-# Getting Started with Create React App
+<br/>
+<p align="center">
+  <h3 align="center">Vidyo.ai SELECT 2024 Internship Round 2 Assignment</h3>
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+  <p align="center">
+    <a href="https://github.com/saksham-tiwari/vidyo-assignment">View Demo</a>
+  </p>
+</p>
 
-## Available Scripts
 
-In the project directory, you can run:
 
-### `npm start`
+## About The Project
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+![Screen Shot](images/screenshot.png)
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+This project was assigned to me by Vidyo.ai as a Round 2 Assessment project for SELECT 2024 internship. I am grateful to Vidyo.ai for considering me for this role. 
 
-### `npm test`
+This project is designed to help you interact with various HTML5 elements, including Canvas, Video, and Audio. The project is divided into two parts, each with specific tasks.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+<b>Part 1: Video File Handling</b>
 
-### `npm run build`
+1. <b>Input Video File</b>: Users can upload a video file of their choice.
+2. <b>Display Video Metadata</b>: The uploaded video's metadata, including its duration, will be displayed on the user interface.
+3. <b>Display Video with Play/Pause Controls</b>: The selected video will be displayed on the screen using the HTML 'Canvas' element. A play/pause button will be placed in the middle of the video container, allowing users to control video playback by clicking on it.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+<b>Part 2: Audio Detection and Waveform Display</b>
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+1. <b>Detect Audio Presence</b>: The project will determine if the uploaded video contains audio. If no audio is present, the user will be prevented from uploading the file.
+2. <b>Display Audio Waveform</b>: If audio is detected, the project will display the audio waveform in a box below the video, as illustrated in the provided diagram.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Getting Started
 
-### `npm run eject`
+To use this React.js project, follow these steps:
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+1. Clone or download the project repository to your local machine.
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+2. Open the project folder in your preferred code editor.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+3. Install project dependencies using the following command: 
+```npm install```
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+4. Start the development server with: 
+```npm start```
 
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
