@@ -13,7 +13,26 @@ function Editor({setErr}) {
   const [isPlaying, setIsPlaying] = useState(false);
   const fileRef = useRef(null);
   const [isLoading, setIsLoading] = useState(false);
+  function fitVideoToCanvas(canvas, video) {
+    const videoAspect = video.videoWidth / video.videoHeight;
+  const canvasAspect = canvas.width / canvas.height;
 
+  let width, height, xOffset, yOffset;
+  if (videoAspect > canvasAspect) {
+    width = canvas.width;
+    height = canvas.width / videoAspect;
+    xOffset = 0;
+    yOffset = (canvas.height - height) / 2;
+  } else {
+    width = canvas.height * videoAspect;
+    height = canvas.height;
+    xOffset = (canvas.width - width) / 2;
+    yOffset = 0;
+  }
+
+  return { width, height, xOffset, yOffset };
+  }
+  
   const handleFileChange = async (event) => {
     const file = event.target.files[0];
     if (file) {
@@ -101,19 +120,20 @@ function Editor({setErr}) {
   const drawVideoFrame = () => {
     const canvas = canvasRef.current;
     const video = videoRef.current;
+    const { width, height, xOffset, yOffset } = fitVideoToCanvas(canvas, video);
     if (!isPlaying) {
       const ctx = canvasRef.current.getContext("2d");
       ctx.drawImage(
         videoRef.current,
-        0,
-        0,
-        canvasRef.current.width,
-        canvasRef.current.height,
+        xOffset, 
+        yOffset,
+        width,
+        height,
       );
     }
     if (canvas && video) {
       const ctx = canvas.getContext("2d");
-      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      ctx.drawImage(video, xOffset, yOffset, width, height);
       if (!video.paused && !video.ended) {
         requestAnimationFrame(drawVideoFrame);
       }

@@ -3,6 +3,7 @@ import "./Video.scss"
 
 const Video = ({videoMetadata, togglePlayPause, isPlaying, canvasRef,isLoading}) => {
   const [isVisible, setIsVisible] = useState(false)
+  
   return (
     <div className='VideoDiv' onMouseEnter={() => setIsVisible(true)} onMouseLeave={() => setIsVisible(false)}>
       {isLoading && <div className='loader'></div>}
