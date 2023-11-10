@@ -2,37 +2,21 @@ import React, { useEffect, useRef, useState } from "react";
 import MetaData from "../MetaData/MetaData";
 import Video from "../Video/Video";
 import WaveSurferComponent from "../WaveSurfer/WaveSurfer";
-import "./VideoPlayer.scss"
+import "./VideoPlayer.scss";
 
-function Editor({setErr}) {
+function Editor({ setErr }) {
+
+  //variables, states and refs
   const [videoSrc, setVideoSrc] = useState(null);
   const [videoMetadata, setVideoMetadata] = useState({ duration: 0 });
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const wavesurferRef = useRef(null);
-  const [isPlaying, setIsPlaying] = useState(false);
   const fileRef = useRef(null);
+  const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  function fitVideoToCanvas(canvas, video) {
-    const videoAspect = video.videoWidth / video.videoHeight;
-  const canvasAspect = canvas.width / canvas.height;
 
-  let width, height, xOffset, yOffset;
-  if (videoAspect > canvasAspect) {
-    width = canvas.width;
-    height = canvas.width / videoAspect;
-    xOffset = 0;
-    yOffset = (canvas.height - height) / 2;
-  } else {
-    width = canvas.height * videoAspect;
-    height = canvas.height;
-    xOffset = (canvas.width - width) / 2;
-    yOffset = 0;
-  }
-
-  return { width, height, xOffset, yOffset };
-  }
-  
+  // Handle file selection and video processing
   const handleFileChange = async (event) => {
     const file = event.target.files[0];
     if (file) {
@@ -43,7 +27,7 @@ function Editor({setErr}) {
       video.onloadedmetadata = () => {
         setIsLoading(true);
         const audioContext = new (window.AudioContext ||
-            window.webkitAudioContext)();
+          window.webkitAudioContext)();
         const source = audioContext.createMediaElementSource(video);
         const analyser = audioContext.createAnalyser();
 
@@ -51,7 +35,7 @@ function Editor({setErr}) {
         gainNode.gain.value = 0;
         source.connect(analyser);
         analyser.connect(gainNode);
-        gainNode.connect(audioContext.destination)
+        gainNode.connect(audioContext.destination);
         analyser.fftSize = 2048;
         const bufferLength = analyser.frequencyBinCount;
         const dataArray = new Uint8Array(bufferLength);
@@ -76,10 +60,10 @@ function Editor({setErr}) {
 
         video.play();
 
-        setTimeout(()=>{
+        setTimeout(() => {
           video.pause();
           if (audioPres) {
-            gainNode.gain.value = 1
+            gainNode.gain.value = 1;
             video.currentTime = 0;
             video.addEventListener("seeked", function drawThumbnail() {
               drawVideoFrame();
@@ -92,17 +76,19 @@ function Editor({setErr}) {
               "Width": video.videoWidth,
               "Aspect Ratio": video.videoWidth / video.videoHeight,
               "Range": `${video.seekable.start(0)} - ${video.seekable
-                  .end(0)
-                  .toFixed(2)}`,
+                .end(0)
+                .toFixed(2)}`,
             });
             setIsLoading(false);
-          } else{
+          } else {
             console.error("The uploaded video has no Audio. Please try again.");
-            setErr(true)
+            setErr(true);
             setIsLoading(false);
-            setTimeout(()=>{window.location.reload()}, 3000)
+            setTimeout(() => {
+              window.location.reload();
+            }, 3000);
           }
-        }, 3000)
+        }, 3000);
       };
       const audioContext = new (window.AudioContext ||
         window.webkitAudioContext)();
@@ -117,6 +103,28 @@ function Editor({setErr}) {
     }
   };
 
+  // Function to fit video to the canvas while maintaining aspect ratio
+  function fitVideoToCanvas(canvas, video) {
+    const videoAspect = video.videoWidth / video.videoHeight;
+    const canvasAspect = canvas.width / canvas.height;
+
+    let width, height, xOffset, yOffset;
+    if (videoAspect > canvasAspect) {
+      width = canvas.width;
+      height = canvas.width / videoAspect;
+      xOffset = 0;
+      yOffset = (canvas.height - height) / 2;
+    } else {
+      width = canvas.height * videoAspect;
+      height = canvas.height;
+      xOffset = (canvas.width - width) / 2;
+      yOffset = 0;
+    }
+
+    return { width, height, xOffset, yOffset };
+  }
+
+  // Draw video frames on the canvas
   const drawVideoFrame = () => {
     const canvas = canvasRef.current;
     const video = videoRef.current;
@@ -125,10 +133,10 @@ function Editor({setErr}) {
       const ctx = canvasRef.current.getContext("2d");
       ctx.drawImage(
         videoRef.current,
-        xOffset, 
+        xOffset,
         yOffset,
         width,
-        height,
+        height
       );
     }
     if (canvas && video) {
@@ -140,6 +148,7 @@ function Editor({setErr}) {
     }
   };
 
+  // Toggle video play/pause
   const togglePlayPause = () => {
     const video = videoRef.current;
     if (video.paused || video.ended) {
@@ -172,11 +181,12 @@ function Editor({setErr}) {
       return () => video.removeEventListener("timeupdate", onTimeUpdate);
     }
   }, [videoSrc]);
-  
+
   return (
     <div className="VideoPlayer">
       <div class="flexDiv">
         <div class="flexLeft">
+          {/* Input for video files */}
           <div className="fileInputDiv">
             <input
               type="file"
@@ -189,21 +199,36 @@ function Editor({setErr}) {
             />
             <button
               className="uploadVideo btn"
-              onClick={() => { fileRef.current.click();}}
+              onClick={() => {
+                fileRef.current.click();
+              }}
               disabled={videoMetadata.duration !== 0}
             >
-              {videoMetadata.duration !== 0? "Video already uploaded! ": "Upload"}
-              {videoMetadata.duration !== 0? <a href="/">Reload?</a>:<></>}
+              {videoMetadata.duration !== 0
+                ? "Video already uploaded! "
+                : "Upload"}
+              {videoMetadata.duration !== 0 ? <a href="/">Reload?</a> : <></>}
             </button>
           </div>
-          <Video videoMetadata={videoMetadata} togglePlayPause={togglePlayPause} isPlaying={isPlaying} canvasRef={canvasRef} isLoading={isLoading}/>
+          {/* Video component */}
+          <Video
+            videoMetadata={videoMetadata}
+            togglePlayPause={togglePlayPause}
+            isPlaying={isPlaying}
+            canvasRef={canvasRef}
+            isLoading={isLoading}
+          />
           
-          <WaveSurferComponent videoMetadata={videoMetadata} videoRef={videoRef} wavesurferRef={wavesurferRef}/>
+          {/* WaveSurfer component */}
+          <WaveSurferComponent
+            videoMetadata={videoMetadata}
+            videoRef={videoRef}
+            wavesurferRef={wavesurferRef}
+          />
         </div>
-      
-        {/* {videoSrc && ( */}
-          <MetaData videoMetadata={videoMetadata} isLoading = {isLoading}/>
-        {/* )} */}
+
+        {/* MetaData component */}
+        <MetaData videoMetadata={videoMetadata} isLoading={isLoading} />
       </div>
     </div>
   );

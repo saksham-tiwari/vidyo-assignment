@@ -3,7 +3,7 @@
   <h3 align="center">Vidyo.ai SELECT 2024 Internship Round 2 Assignment</h3>
 
   <p align="center">
-    <a href="https://github.com/saksham-tiwari/vidyo-assignment">View Demo</a>
+    <a href="https://vidyo-assignment.vercel.app/">View Demo</a>
   </p>
 </p>
 
