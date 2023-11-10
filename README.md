@@ -3,7 +3,7 @@
   <h3 align="center">Vidyo.ai SELECT 2024 Internship Round 2 Assignment</h3>
 
   <p align="center">
-    <a href="https://vidyo-assignment.vercel.app/">View Demo</a>
+    Deployed Link : <a href="https://vidyo-assignment.vercel.app/">https://vidyo-assignment.vercel.app/</a>
   </p>
 </p>
 
